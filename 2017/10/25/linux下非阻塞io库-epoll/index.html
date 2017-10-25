@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>
-    诺唯
-    
-</title>
+    <title> linux下非阻塞io库 epoll · 诺唯 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -19,6 +16,8 @@
 
 
 
+
+    <meta name="keywords" content="epoll, IO多路复用, Go语言, Nlvi" />
 
 <link rel="stylesheet" href="/style/style.css">
 <script src="/script/jquery.min.js"></script>
@@ -212,10 +211,6 @@
         <main class="main" id="main">
             
     
-
-<section class="posts">
-    
-        
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
@@ -224,15 +219,26 @@
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2017/10/25/linux下非阻塞io库-epoll/">linux下非阻塞io库 epoll</a>
+                linux下非阻塞io库 epoll
             
             </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/epoll/">epoll</a>
+                    
+                        <a href="/tags/IO多路复用/">IO多路复用</a>
+                    
+                        <a href="/tags/Go语言/">Go语言</a>
+                    
+                    </div>
+                
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                
-                    <h2 id="一、用一个生活中的例子来解释"><a href="#一、用一个生活中的例子来解释" class="headerlink" title="一、用一个生活中的例子来解释."></a>一、用一个生活中的例子来解释.</h2><p>假设你在大学中读书,要等待一个朋友来访,而这个朋友只知道你在A号楼,但是不知道你具体住在哪里,于是你们约好了在A号楼门口见面.<br>如果你使用的阻塞IO模型来处理这个问题,那么你就只能一直守候在A号楼门口等待朋友的到来,在这段时间里你不能做别的事情,不难知道,这种方式的效率是低下的.</p>
+                <h2 id="一、用一个生活中的例子来解释"><a href="#一、用一个生活中的例子来解释" class="headerlink" title="一、用一个生活中的例子来解释."></a>一、用一个生活中的例子来解释.</h2><p>假设你在大学中读书,要等待一个朋友来访,而这个朋友只知道你在A号楼,但是不知道你具体住在哪里,于是你们约好了在A号楼门口见面.<br>如果你使用的阻塞IO模型来处理这个问题,那么你就只能一直守候在A号楼门口等待朋友的到来,在这段时间里你不能做别的事情,不难知道,这种方式的效率是低下的.</p>
 <p>进一步解释select和epoll模型的差异.<br>select版大妈做的是如下的事情:比如同学甲的朋友来了,select版大妈比较笨,她带着朋友挨个房间进行查询谁是同学甲,你等的朋友来了,于是在实际的代码中,select版大妈做的是以下的事情:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">int n = select(&amp;readset,NULL,NULL,100); </div><div class="line">for (int i = 0; n &gt; 0; ++i) &#123;</div><div class="line">     if (FD_ISSET(fdarray[i], &amp;readset)) &#123;</div><div class="line">         do_something(fdarray[i]); --n; </div><div class="line">    &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>epoll版大妈就比较先进了,她记下了同学甲的信息,比如说他的房间号,那么等同学甲的朋友到来时,只需要告诉该朋友同学甲在哪个房间即可,不用自己亲自带着人满大楼的找人了.于是epoll版大妈做的事情可以用如下的代码表示:</p>
@@ -288,49 +294,54 @@ gitment.render('container')
 
 
 
-                
             
         
         </div>
         
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2017/10/25/我的第一篇博客/">我的第一篇博客</a>
             
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <p>#这是我的第一篇博客</p>
-<p>推荐一下我的专栏: <a href="https://zhuanlan.zhihu.com/goroutine" target="_blank" rel="external">golang数据结构内部实现</a></p>
-
-                
-            
-        
-        </div>
         
     </article>
     
-
-    
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
+        
+    <nav class="article-page">
+        
+        
+            <a href="/2017/10/25/我的第一篇博客/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>我的第一篇博客
+                </span>
+            </a>
+        
     </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more jumping-in long infinite" style="font-size:24px;display:block;text-align:center;transform:rotate(180deg);"></i>
+    <div class="post-comments" id="post-comments" style="display: block;margin: auto 16px;">
+        
+        
+<!-- Gitment Comments -->
+<div id="gitment"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: "",
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitment')
+</script>
+
+        
+        
+
+    </div>
+
+    
 
 
         </main>
@@ -416,6 +427,16 @@ $(document).ready(function(){
 })
 </script>
     </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">linux下非阻塞io库 epoll</a></li>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、用一个生活中的例子来解释"><span class="toc-text">一、用一个生活中的例子来解释.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、深入理解epoll的实现原理：开发高性能网络程序时，windows开发者们言必称iocp，linux开发者们则言必称epoll。"><span class="toc-text">二、深入理解epoll的实现原理：开发高性能网络程序时，windows开发者们言必称iocp，linux开发者们则言必称epoll。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、扩展阅读（epoll与之前其他相关技术的比较）："><span class="toc-text">三、扩展阅读（epoll与之前其他相关技术的比较）：</span></a></li></ol>
+        </div>
+    </div>
+
     
     <div class="backtop syuanpi dead toTop" id="backtop">
     <i class="iconfont icon-up"></i>

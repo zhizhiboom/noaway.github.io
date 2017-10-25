@@ -1,238 +1,11 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <title>
-    诺唯
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
     
-</title>
-    <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="browsermode" content="application">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="诺唯">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="msapplication-navbutton-color" content="#666666">
-<meta name= "format-detection" content="telephone=no" />
-<meta name="keywords" content="nlvi, Nlvi" />
-
-
-
-
-
-<link rel="stylesheet" href="/style/style.css">
-<script src="/script/jquery.min.js"></script>
-<script>
-    var CONFIG = {
-        title: "诺唯",
-        author: "王阳",
-        lightbox: true,
-        animate: true
-    }
-</script>
-
-
-
-    <link rel="stylesheet" href="/lightbox/css/lightbox.min.css">
-
-
-
-
-    <link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
-
-
-
-
-
-
-
-
-
-    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-</head>
-<body>
-    <div class="progress">
-    <div class="progress-inner"></div>
-</div>
-    <div class="body">
-    <div class="tagcloud-mask"></div>  
-<div class="tagcloud" id="tagcloud">
-    <div class="tagcloud-inner">
-        <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a>
-    </div>
-</div>
-    <header class="header" id="header">
-    <div class="title syuanpi tvIn">
-    <div class="table">
-        <div class="connect">
-            <div class="connect-inner">
-                <span><a href="/">诺唯</a></span>
-                
-            </div>
-        </div>
-    </div>
-</div>
-    <nav class="main-nav syuanpi tvIn">
-<div class="table">
-
-    <ul class="menu">
-        
-        <li class="menu-item">
-            <a href="javascript:;" id="search">
-                <span>搜索</span>
-                
-                    <span class="menu-item-label">search</span>
-                
-            </a>
-        </li>
-        
-        
-        
-            <li class="menu-item">
-                <a href="/">
-                    <span>文章</span>
-                    
-                        <span class="menu-item-label">article</span>
-                    
-                </a>
-            </li>
-        
-        
-        
-            <li class="menu-item">
-                <a href="/archives">
-                    <span>归档</span>
-                    
-                        <span class="menu-item-label">archives</span>
-                    
-                </a>
-            </li>
-        
-        
-        
-            <li class="menu-item">
-                <a href="javascript:;" id="tags">
-                    <span>标签</span>
-                    
-                        <span class="menu-item-label">tags</span>
-                    
-                </a>
-            </li>
-        
-        
-        
-            <li class="menu-item">
-                <a href="/about">
-                    <span>关于</span>
-                    
-                        <span class="menu-item-label">about</span>
-                    
-                </a>
-            </li>
-        
-        
-    </ul>
-
-</div>
-</nav>
-</header>
-<div class="mobile-header">
-    <div class="mobile-header-body">
-        <div class="mobile-header-list">
-            
-            
-                <div class="mobile-nav-item">
-                    <a href="/">
-                        <span>文章</span>
-                        
-                            <span class="menu-item-label">article</span>
-                        
-                    </a>
-                </div>
-            
-            
-            
-                <div class="mobile-nav-item">
-                    <a href="/archives">
-                        <span>归档</span>
-                        
-                            <span class="menu-item-label">archives</span>
-                        
-                    </a>
-                </div>
-            
-            
-            
-                <div class="mobile-nav-item inner-cloud">
-                    <div class="mobile-nav-tag">
-                        <a href="javascript:;" id="mobile-tags">
-                            <span>标签</span>
-                            
-                                <span class="menu-item-label">tags</span>
-                            
-                        </a>
-                    </div>
-                    <div class="mobile-nav-tagcloud">
-                        <div class="mobile-tagcloud-inner">
-                            <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a>
-                        </div>
-                    </div>
-                </div>
-            
-            
-            
-                <div class="mobile-nav-item">
-                    <a href="/about">
-                        <span>关于</span>
-                        
-                            <span class="menu-item-label">about</span>
-                        
-                    </a>
-                </div>
-            
-            
-        </div>
-    </div>
-    <div class="mobile-header-nav">
-        <div class="mobile-header-item" id="mobile-left">
-            <div class="header-menu-item">
-                <span class="header-menu-line"></span>
-            </div>
-        </div>
-        <h1 class="mobile-header-title">
-            <a href="/">诺唯</a>
-        </h1>
-        <div class="mobile-header-item"></div>
-    </div>
-</div>
-
-    <div class="container">
-        <main class="main" id="main">
-            
-    
-
-<section class="posts">
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2017/10/25/linux下非阻塞io库-epoll/">linux下非阻塞io库 epoll</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="一、用一个生活中的例子来解释"><a href="#一、用一个生活中的例子来解释" class="headerlink" title="一、用一个生活中的例子来解释."></a>一、用一个生活中的例子来解释.</h2><p>假设你在大学中读书,要等待一个朋友来访,而这个朋友只知道你在A号楼,但是不知道你具体住在哪里,于是你们约好了在A号楼门口见面.<br>如果你使用的阻塞IO模型来处理这个问题,那么你就只能一直守候在A号楼门口等待朋友的到来,在这段时间里你不能做别的事情,不难知道,这种方式的效率是低下的.</p>
+    <entry>
+      <title><![CDATA[linux下非阻塞io库 epoll]]></title>
+      <url>/2017/10/25/linux%E4%B8%8B%E9%9D%9E%E9%98%BB%E5%A1%9Eio%E5%BA%93-epoll/</url>
+      <content type="html"><![CDATA[<h2 id="一、用一个生活中的例子来解释"><a href="#一、用一个生活中的例子来解释" class="headerlink" title="一、用一个生活中的例子来解释."></a>一、用一个生活中的例子来解释.</h2><p>假设你在大学中读书,要等待一个朋友来访,而这个朋友只知道你在A号楼,但是不知道你具体住在哪里,于是你们约好了在A号楼门口见面.<br>如果你使用的阻塞IO模型来处理这个问题,那么你就只能一直守候在A号楼门口等待朋友的到来,在这段时间里你不能做别的事情,不难知道,这种方式的效率是低下的.</p>
 <p>进一步解释select和epoll模型的差异.<br>select版大妈做的是如下的事情:比如同学甲的朋友来了,select版大妈比较笨,她带着朋友挨个房间进行查询谁是同学甲,你等的朋友来了,于是在实际的代码中,select版大妈做的是以下的事情:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">int n = select(&amp;readset,NULL,NULL,100); </div><div class="line">for (int i = 0; n &gt; 0; ++i) &#123;</div><div class="line">     if (FD_ISSET(fdarray[i], &amp;readset)) &#123;</div><div class="line">         do_something(fdarray[i]); --n; </div><div class="line">    &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>epoll版大妈就比较先进了,她记下了同学甲的信息,比如说他的房间号,那么等同学甲的朋友到来时,只需要告诉该朋友同学甲在哪个房间即可,不用自己亲自带着人满大楼的找人了.于是epoll版大妈做的事情可以用如下的代码表示:</p>
@@ -287,163 +60,31 @@ gitment.render('container')
 </script>
 
 
-
-                
+]]></content>
+      
+        
+        <tags>
             
+            <tag> epoll </tag>
+            
+            <tag> IO多路复用 </tag>
+            
+            <tag> Go语言 </tag>
+            
+        </tags>
         
-        </div>
-        
-    </article>
+    </entry>
     
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2017/10/25/我的第一篇博客/">我的第一篇博客</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <p>#这是我的第一篇博客</p>
+    <entry>
+      <title><![CDATA[我的第一篇博客]]></title>
+      <url>/2017/10/25/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+      <content type="html"><![CDATA[<p>#这是我的第一篇博客</p>
 <p>推荐一下我的专栏: <a href="https://zhuanlan.zhihu.com/goroutine" target="_blank" rel="external">golang数据结构内部实现</a></p>
-
-                
-            
+]]></content>
+      
         
-        </div>
-        
-    </article>
+    </entry>
     
-
-    
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
-    </nav>
-
-
-        </main>
-        <footer class="footer syuanpi fadeIn" id="footer">
-    <hr>
-    <div class="footer-wrapper">
-        <div class="left">
-            <div class="contact-icon">
-    
-    
-    
-    
-    
-    
-    
-    
-        
-        
-        
-        
-            <a href="https://www.zhihu.com/people/noaway" class="iconfont icon-zhihu" title="zhihu"></a>
-        
-        
-        
-        
-    
-        
-            <a href="https://github.com/noaway" class="iconfont icon-github" title="github"></a>
-        
-        
-        
-        
-        
-        
-        
-    
-</div>
-        </div>
-        <div class="right">
-            <div class="copyright">
-    <div class="info">
-        <span>&copy;</span>
-        <span>2017 ~ 2017</span>
-        <span>❤</span>
-        <span>王阳</span>
-    </div>
-    
-    
-    <div class="visit_count">
-        <i class="iconfont icon-visit"></i>
-        <span id="busuanzi_value_site_uv"></span>
-        <i class="iconfont icon-people"></i>
-        <span id="busuanzi_value_site_pv"></span>
-    </div>
-    
-</div>
-        </div>
-    </div>
-</footer>
-    </div>
-    <script src="/script/nlvi.js"></script>
-<script src="/script/search.js"></script>
-
-    <script src="/lightbox/js/lightbox.min.js"></script>
-
-<script>
-$(document).ready(function(){
-    document.body.addEventListener('touchstart', function () {});
-    $('.progress').hide();
-    $('.body').show();
-    Nlvi.tagcloud();
-    Nlvi.mobileHeader();
-    Nlvi.back2top();
-    Nlvi.smoothScroll();
-    Nlvi.onView();
-    Nlvi.showToc();
-    Nlvi.showComments();
-    Nlvi.showReward();
-    Nlvi.picPos();
-
-    !CONFIG.animate && Nlvi.offAnimate();
-    CONFIG.lightbox && Nlvi.onPicBox();
-})
-</script>
-    </div>
-    
-    <div class="backtop syuanpi dead toTop" id="backtop">
-    <i class="iconfont icon-up"></i>
-    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
-</div>
-    
-    <div class="search" id="search">
-        <div class="mask" id="mask"></div>
-        <div class="search-wrapper syuanpi">
-            <h1 id="search-header" class="syuanpi">搜索一下？</h1>
-            <div class="input">
-                <input type="text" id="local-search-input" results="0" name="">
-            </div>
-            <div id="local-search-result"></div>
-        </div>
-    </div>
-    <script>
-    var GREETING = {
-        morning: "当我们探索时，就要发现到真理",
-        noon: "人的天职在于勇于探索真理。",
-        after: "一件事实是一条没有性别的真理",
-        night: "真理有时可能变得黯淡，但它永远不会熄灭",
-        midnight: "真理在人那里获得生命力，并且展现出来"
-    }
-    $(document).ready(function(){
-        Nlvi.search();
-    });
-    </script>
-
-</body>
-</html>
+  
+  
+</search>
