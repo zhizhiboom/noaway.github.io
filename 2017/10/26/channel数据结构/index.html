@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>
-    诺唯
-    
-        | Noaway
-    
-</title>
+    <title> channel数据结构 · 诺唯 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -25,6 +20,8 @@
     <meta name="description" content="诺唯,noaway">
 
 
+
+    <meta name="keywords" content="Go 语言, golang 最佳实践, 技术原理, Nlvi" />
 
 <link rel="stylesheet" href="/style/style.css">
 <script src="/script/jquery.min.js"></script>
@@ -220,10 +217,6 @@
         <main class="main" id="main">
             
     
-
-<section class="posts">
-    
-        
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
@@ -232,15 +225,26 @@
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2017/10/26/channel数据结构/">channel数据结构</a>
+                channel数据结构
             
             </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/Go-语言/">Go 语言</a>
+                    
+                        <a href="/tags/golang-最佳实践/">golang 最佳实践</a>
+                    
+                        <a href="/tags/技术原理/">技术原理</a>
+                    
+                    </div>
+                
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                
-                    <p><img src="http://oyft9mgwt.bkt.clouddn.com/channel%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.jpg" alt=""></p>
+                <p><img src="http://oyft9mgwt.bkt.clouddn.com/channel%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.jpg" alt=""></p>
 <p>channel是go语言的一大特色，使用原子函数还是使用互斥锁都不如使用channel来的简单，go语言中的channel可以作为函数参数传递和返回值返回，通过发送和接受数据在goroutine之间同步(在学习和使用go语言的时候，我们应该牢记，go语言中所有的结构都是值拷贝的)<br>本文不对channel使用作讲解，直接上酸(dai)菜(ma):</p>
 <p>type hchan struct {<br>    qcount   uint           //队列数据总的数据数量<br>    dataqsiz uint           //环形队列的数据大小<br>    buf      unsafe.Pointer //指向dataqsiz元素类型大小的数组<br>    elemsize uint16<br>    closed   uint32<br>    elemtype <em>_type // 元素类型<br>    sendx    uint   // 发送数据时的游标<br>    recvx    uint   // 接收数据时的游标<br>    recvq    waitq  // 接收而阻塞的等待队列<br>    sendq    waitq  // 发送而阻塞的等待队列<br>        lock mutex      // 保护hchan所有字段的锁<br>}<br>hchan 是chan的结构体，在hchan结构中qcount和elemsize指定队列的容量和使用量，dataqsiz队列的大小，整个hchan结构体只记录了队列大小相关的值，带有缓冲区的chan需要make的时候指定，我们简单的看一下chan的make方法是如何分配缓冲区的<br>func makechan(t </em>chantype, size int64) *hchan {<br>    elem := t.elem</p>
 <pre><code>    ...
@@ -488,150 +492,62 @@ return true, !closed
 <p>//select的case和default 编译器最终会编译成if else</p>
 <p>if selectnbsend(c, v) {<br>       … foo<br>} else {<br>       … bar<br>}<br>未来几天我会完成select的具体实现。。。</p>
 
-                
             
         
         </div>
         
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月26日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2017/10/26/interface引发的事件真相/">interface引发的事件真相</a>
             
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <p><img src="http://oyft9mgwt.bkt.clouddn.com/interface%E5%BC%95%E5%8F%91%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%9C%9F%E7%9B%B8.jpg" alt=""><br>(PS:专栏所有的代码都是基于go version go1.8 darwin/amd64)</p>
-<p>流动的水没有形状，漂流的风找不到踪迹，一切代码都了然于心，我们在写代码的时候，总是有一种思维定式陪伴左右，在对事物做判断的时候，往往这种思维定式会往正向或反向做推动作用，在开发的过程中如果不小心忽略，往往就是埋下了陷阱，以下代码是大多数新手会遇到的坑，<br>
-                    
-            
-        
-            <p class="content-link">
-                <a href="/2017/10/26/interface引发的事件真相/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
-        
-        </div>
         
     </article>
     
-
-    
         
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2017/10/25/golang实现epoll代码解析/">golang实现epoll代码解析</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <p>在文章之前，我先讲个故事，我有个朋友以前是java程序员，后来转过来做go，当我问他为什么选择go的时候，他跟我说，因为写go就没人说他写的代码low了 😄😄😄 这只是个段子不要当真。。。<br>好回归正题 golang 的网络轮循器是如何实现的那，先说明一下 golang 的网络轮循器是做什么的，你的go程序启动的时候会创建一个M去跑我们的系统监测任务代码如下(专栏下面的所有文章都是以go 1.8版本为准):</p>
-                    
-            
+    <nav class="article-page">
         
-            <p class="content-link">
-                <a href="/2017/10/25/golang实现epoll代码解析/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
         
-        </div>
+            <a href="/2017/10/26/interface引发的事件真相/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>interface引发的事件真相
+                </span>
+            </a>
         
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2017/10/25/linux下非阻塞io库-epoll/">linux下非阻塞io库 epoll</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="一、用一个生活中的例子来解释"><a href="#一、用一个生活中的例子来解释" class="headerlink" title="一、用一个生活中的例子来解释."></a>一、用一个生活中的例子来解释.</h2><p>假设你在大学中读书,要等待一个朋友来访,而这个朋友只知道你在A号楼,但是不知道你具体住在哪里,于是你们约好了在A号楼门口见面.<br>如果你使用的阻塞IO模型来处理这个问题,那么你就只能一直守候在A号楼门口等待朋友的到来,在这段时间里你不能做别的事情,不难知道,这种方式的效率是低下的.</p>
-<p>进一步解释select和epoll模型的差异.<br>select版大妈做的是如下的事情:比如同学甲的朋友来了,select版大妈比较笨,她带着朋友挨个房间进行查询谁是同学甲,你等的朋友来了,于是在实际的代码中,select版大妈做的是以下的事情:</p>
-                    
-            
-        
-            <p class="content-link">
-                <a href="/2017/10/25/linux下非阻塞io库-epoll/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
-        
-        </div>
-        
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年10月25日</span>
-                
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2017/10/25/我的第一篇博客/">我的第一篇博客</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <p>#这是我的第一篇博客</p>
-<p>推荐一下我的专栏: <a href="https://zhuanlan.zhihu.com/goroutine" target="_blank" rel="external">golang数据结构内部实现</a></p>
-
-                
-            
-        
-        </div>
-        
-    </article>
-    
-
-    
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
     </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more jumping-in long infinite" style="font-size:24px;display:block;text-align:center;transform:rotate(180deg);"></i>
+    <div class="post-comments" id="post-comments" style="display: block;margin: auto 16px;">
+        
+        
+        
+        
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://blog-noaway-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
+
+
+    </div>
+
+
+
+    
 
 
         </main>
@@ -717,6 +633,16 @@ $(document).ready(function(){
 })
 </script>
     </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">channel数据结构</a></li>
+            
+        </div>
+    </div>
+
     
     <div class="backtop syuanpi dead toTop" id="backtop">
     <i class="iconfont icon-up"></i>

@@ -3,6 +3,313 @@
   
     
     <entry>
+      <title><![CDATA[channel数据结构]]></title>
+      <url>/2017/10/26/channel%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</url>
+      <content type="html"><![CDATA[<p><img src="http://oyft9mgwt.bkt.clouddn.com/channel%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.jpg" alt=""></p>
+<p>channel是go语言的一大特色，使用原子函数还是使用互斥锁都不如使用channel来的简单，go语言中的channel可以作为函数参数传递和返回值返回，通过发送和接受数据在goroutine之间同步(在学习和使用go语言的时候，我们应该牢记，go语言中所有的结构都是值拷贝的)<br>本文不对channel使用作讲解，直接上酸(dai)菜(ma):</p>
+<p>type hchan struct {<br>    qcount   uint           //队列数据总的数据数量<br>    dataqsiz uint           //环形队列的数据大小<br>    buf      unsafe.Pointer //指向dataqsiz元素类型大小的数组<br>    elemsize uint16<br>    closed   uint32<br>    elemtype <em>_type // 元素类型<br>    sendx    uint   // 发送数据时的游标<br>    recvx    uint   // 接收数据时的游标<br>    recvq    waitq  // 接收而阻塞的等待队列<br>    sendq    waitq  // 发送而阻塞的等待队列<br>        lock mutex      // 保护hchan所有字段的锁<br>}<br>hchan 是chan的结构体，在hchan结构中qcount和elemsize指定队列的容量和使用量，dataqsiz队列的大小，整个hchan结构体只记录了队列大小相关的值，带有缓冲区的chan需要make的时候指定，我们简单的看一下chan的make方法是如何分配缓冲区的<br>func makechan(t </em>chantype, size int64) *hchan {<br>    elem := t.elem</p>
+<pre><code>    ...
+    ...
+
+var c *hchan
+if elem.kind&amp;kindNoPointers != 0 || size == 0 {
+    c = (*hchan)(mallocgc(hchanSize+uintptr(size)*elem.size, nil, true))
+    if size &gt; 0 &amp;&amp; elem.size != 0 {
+        c.buf = add(unsafe.Pointer(c), hchanSize)
+    } else {
+        c.buf = unsafe.Pointer(c)
+    }
+} else {
+    c = new(hchan)
+    c.buf = newarray(elem, int(size))
+}
+...
+    ...
+</code></pre><p>}<br>makechan 将hchan初始化0值之后并判断size如果是有缓冲区的chan则紧挨着hchan结构体中分配size大小的 “_type” 类型的数组。</p>
+<p>type waitq struct {<br>    first <em>sudog<br>    last  </em>sudog<br>}<br>type sudog struct {<br>    g          <em>g<br>    selectdone </em>uint32<br>    next       <em>sudog<br>    prev       </em>sudog<br>    elem       unsafe.Pointer </p>
+<pre><code>acquiretime int64
+releasetime int64
+ticket      uint32
+waitlink    *sudog // g.waiting list
+c           *hchan // channel
+</code></pre><p>}<br>g和elem分别存储goroutine的数据</p>
+<p>发送channel<br>向channel中写数据时在runtime包中对应的是，以下方法：</p>
+<p>func chansend(t <em>chantype, c </em>hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {<br>    if raceenabled {<br>        raceReadObjectPC(t.elem, ep, callerpc, funcPC(chansend))<br>    }<br>    if msanenabled {<br>        msanread(ep, t.elem.size)<br>    }</p>
+<pre><code>if c == nil {
+    if !block {
+        return false
+    }
+    gopark(nil, nil, &quot;chan send (nil chan)&quot;, traceEvGoStop, 2)
+    throw(&quot;unreachable&quot;)
+}
+
+if debugChan {
+    print(&quot;chansend: chan=&quot;, c, &quot;\n&quot;)
+}
+
+if raceenabled {
+    racereadpc(unsafe.Pointer(c), callerpc, funcPC(chansend))
+}
+
+
+if !block &amp;&amp; c.closed == 0 &amp;&amp; ((c.dataqsiz == 0 &amp;&amp; c.recvq.first == nil) ||
+    (c.dataqsiz &gt; 0 &amp;&amp; c.qcount == c.dataqsiz)) {
+    return false
+}
+
+var t0 int64
+if blockprofilerate &gt; 0 {
+    t0 = cputicks()
+}
+
+lock(&amp;c.lock)
+
+if c.closed != 0 {
+    unlock(&amp;c.lock)
+    panic(plainError(&quot;send on closed channel&quot;))
+}
+
+if sg := c.recvq.dequeue(); sg != nil {
+    send(c, sg, ep, func() { unlock(&amp;c.lock) })
+    return true
+}
+
+if c.qcount &lt; c.dataqsiz {
+    qp := chanbuf(c, c.sendx)
+    if raceenabled {
+        raceacquire(qp)
+        racerelease(qp)
+    }
+    typedmemmove(c.elemtype, qp, ep)
+    c.sendx++
+    if c.sendx == c.dataqsiz {
+        c.sendx = 0
+    }
+    c.qcount++
+    unlock(&amp;c.lock)
+    return true
+}
+
+if !block {
+    unlock(&amp;c.lock)
+    return false
+}
+
+gp := getg()
+mysg := acquireSudog()
+mysg.releasetime = 0
+if t0 != 0 {
+    mysg.releasetime = -1
+}
+
+mysg.elem = ep
+mysg.waitlink = nil
+mysg.g = gp
+mysg.selectdone = nil
+mysg.c = c
+gp.waiting = mysg
+gp.param = nil
+c.sendq.enqueue(mysg)
+goparkunlock(&amp;c.lock, &quot;chan send&quot;, traceEvGoBlockSend, 3)
+
+
+if mysg != gp.waiting {
+    throw(&quot;G waiting list is corrupted&quot;)
+}
+gp.waiting = nil
+if gp.param == nil {
+    if c.closed == 0 {
+        throw(&quot;chansend: spurious wakeup&quot;)
+    }
+    panic(plainError(&quot;send on closed channel&quot;))
+}
+gp.param = nil
+if mysg.releasetime &gt; 0 {
+    blockevent(mysg.releasetime-t0, 2)
+}
+mysg.c = nil
+releaseSudog(mysg)
+return true
+</code></pre><p>}<br>发送数据时先判断channel类型，如果有缓冲区，判断channel是否还有空间，然后从等待channel中获取等待channel中的接受者，如果取到接收者，则将对象直接传递给接受者，然后将接受者所在的go放入P所在的可运行G队列,发送过程完成，如果未取到接收者，则将发送者enqueue到发送channel，发送者进入阻塞状态，有缓冲的channel需要先判断channel缓冲是否还有空间，如果缓冲空间已满，则将发送者enqueue到发送channel，发送者进入阻塞状态如果缓冲空间未满，则将元素copy到缓冲中，这时发送者就不会进入阻塞状态，最后尝试唤醒等待队列中的一个接受者。</p>
+<p>接收channel<br>向channel中接收数据时在runtime包中对应的是，以下方法：</p>
+<p>func chanrecv(t <em>chantype, c </em>hchan, ep unsafe.Pointer, block bool) (selected, received bool) {<br>    // raceenabled: don’t need to check ep, as it is always on the stack<br>    // or is new memory allocated by reflect.</p>
+<pre><code>if debugChan {
+    print(&quot;chanrecv: chan=&quot;, c, &quot;\n&quot;)
+}
+
+if c == nil {
+    if !block {
+        return
+    }
+    gopark(nil, nil, &quot;chan receive (nil chan)&quot;, traceEvGoStop, 2)
+    throw(&quot;unreachable&quot;)
+}
+
+// Fast path: check for failed non-blocking operation without acquiring the lock.
+//
+// After observing that the channel is not ready for receiving, we observe that the
+// channel is not closed. Each of these observations is a single word-sized read
+// (first c.sendq.first or c.qcount, and second c.closed).
+// Because a channel cannot be reopened, the later observation of the channel
+// being not closed implies that it was also not closed at the moment of the
+// first observation. We behave as if we observed the channel at that moment
+// and report that the receive cannot proceed.
+//
+// The order of operations is important here: reversing the operations can lead to
+// incorrect behavior when racing with a close.
+if !block &amp;&amp; (c.dataqsiz == 0 &amp;&amp; c.sendq.first == nil ||
+    c.dataqsiz &gt; 0 &amp;&amp; atomic.Loaduint(&amp;c.qcount) == 0) &amp;&amp;
+    atomic.Load(&amp;c.closed) == 0 {
+    return
+}
+
+var t0 int64
+if blockprofilerate &gt; 0 {
+    t0 = cputicks()
+}
+
+lock(&amp;c.lock)
+
+if c.closed != 0 &amp;&amp; c.qcount == 0 {
+    if raceenabled {
+        raceacquire(unsafe.Pointer(c))
+    }
+    unlock(&amp;c.lock)
+    if ep != nil {
+        typedmemclr(c.elemtype, ep)
+    }
+    return true, false
+}
+
+if sg := c.sendq.dequeue(); sg != nil {
+    // Found a waiting sender. If buffer is size 0, receive value
+    // directly from sender. Otherwise, receive from head of queue
+    // and add sender&apos;s value to the tail of the queue (both map to
+    // the same buffer slot because the queue is full).
+    recv(c, sg, ep, func() { unlock(&amp;c.lock) })
+    return true, true
+}
+
+if c.qcount &gt; 0 {
+    // Receive directly from queue
+    qp := chanbuf(c, c.recvx)
+    if raceenabled {
+        raceacquire(qp)
+        racerelease(qp)
+    }
+    if ep != nil {
+        typedmemmove(c.elemtype, ep, qp)
+    }
+    typedmemclr(c.elemtype, qp)
+    c.recvx++
+    if c.recvx == c.dataqsiz {
+        c.recvx = 0
+    }
+    c.qcount--
+    unlock(&amp;c.lock)
+    return true, true
+}
+
+if !block {
+    unlock(&amp;c.lock)
+    return false, false
+}
+
+// no sender available: block on this channel.
+gp := getg()
+mysg := acquireSudog()
+mysg.releasetime = 0
+if t0 != 0 {
+    mysg.releasetime = -1
+}
+// No stack splits between assigning elem and enqueuing mysg
+// on gp.waiting where copystack can find it.
+mysg.elem = ep
+mysg.waitlink = nil
+gp.waiting = mysg
+mysg.g = gp
+mysg.selectdone = nil
+mysg.c = c
+gp.param = nil
+c.recvq.enqueue(mysg)
+goparkunlock(&amp;c.lock, &quot;chan receive&quot;, traceEvGoBlockRecv, 3)
+
+// someone woke us up
+if mysg != gp.waiting {
+    throw(&quot;G waiting list is corrupted&quot;)
+}
+gp.waiting = nil
+if mysg.releasetime &gt; 0 {
+    blockevent(mysg.releasetime-t0, 2)
+}
+closed := gp.param == nil
+gp.param = nil
+mysg.c = nil
+releaseSudog(mysg)
+return true, !closed
+</code></pre><p>}<br>接收channel与发送类似首先也是判断channel的类型，然后如果是有缓冲的channel就判断缓冲中是否有元素，接着从channel中获取接受者，如果取到，则直接从接收者获取元素，并唤醒发送者，本次接收过程完成，如果没有取到接收者，阻塞当前的goroutine并等待发送者唤醒，如果是拥有缓冲的channel需要先判断缓冲中是否有元素，缓冲为空时，阻塞当前goroutine并等待发送者唤醒，缓冲如果不为空，则取出缓冲中的第一个元素，然后尝试唤醒channel中的一个发送者(这篇文章暂属临时版本，有些话需要斟酌，不久会更新。。。)</p>
+<p>接下来我会发表select的结构先说个预告。。。</p>
+<p>select {<br>       case c &lt;- v:<br>              … foo<br>       default:<br>              … bar<br>}</p>
+<p>//select的case和default 编译器最终会编译成if else</p>
+<p>if selectnbsend(c, v) {<br>       … foo<br>} else {<br>       … bar<br>}<br>未来几天我会完成select的具体实现。。。</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Go 语言 </tag>
+            
+            <tag> golang 最佳实践 </tag>
+            
+            <tag> 技术原理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[interface引发的事件真相]]></title>
+      <url>/2017/10/26/interface%E5%BC%95%E5%8F%91%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%9C%9F%E7%9B%B8/</url>
+      <content type="html"><![CDATA[<p><img src="http://oyft9mgwt.bkt.clouddn.com/interface%E5%BC%95%E5%8F%91%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%9C%9F%E7%9B%B8.jpg" alt=""><br>(PS:专栏所有的代码都是基于go version go1.8 darwin/amd64)</p>
+<p>流动的水没有形状，漂流的风找不到踪迹，一切代码都了然于心，我们在写代码的时候，总是有一种思维定式陪伴左右，在对事物做判断的时候，往往这种思维定式会往正向或反向做推动作用，在开发的过程中如果不小心忽略，往往就是埋下了陷阱，以下代码是大多数新手会遇到的坑，<br><a id="more"></a></p>
+<p>package main</p>
+<p>import (<br>    “fmt”<br>)</p>
+<p>type People interface {<br>    Name() string<br>}<br>type Student struct{ name string }</p>
+<p>func (stu *Student) Name() string {<br>    return stu.name<br>}</p>
+<p>func getPeople() People {<br>    var stu *Student<br>    return stu<br>}</p>
+<p>func main() {<br>    if getPeople() == nil {<br>        fmt.Println(“AAAAA”)<br>    } else {<br>        fmt.Println(“BBBBB”)<br>    }<br>}<br>上面的代码输出什么那？有些人会认为打印AAAAA，因为他们会认为getPeople方法里面stu是nil 所以返回的就是nil，这样想就大错特错，因为虽然返回的stu是nil 但是函数返回时People接口的结构的本身并不是nil，在我们不了解interface内部结构之前请往下看。</p>
+<p>为什么我会选择去写一个关于interface的文章那，我认为他在go语言里面有这非常重要的地位，仅次于goroutine和channel的地位，我在未接触go之前一直从事于c#的开发，接口对我来说就是不同组件之间的契约，对这个契约强制你必须去继承接口，而go语言的设计就非常轻巧，只要实现了接口所要求的所有函数即可，go中的接口分为两种一种是空的接口类似这样：</p>
+<p>var in interface{}<br>例外一种是非空的接口即在接口内部声明了一些方法：</p>
+<p>type People interface {<br>    Name() string<br>}<br>接下来我就根据上面的例子来对比一下空接口和非空接口内部结构</p>
+<p>type eface struct {          //空接口<br>    _type <em>_type         //类型信息<br>    data  unsafe.Pointer //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void</em>)<br>}<br>type iface struct {          //带有方法的接口<br>    tab  <em>itab           //存储type信息还有结构实现方法的集合<br>    data unsafe.Pointer  //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void</em>)<br>}<br>eface包含一个类型信息，可以为reflect提供帮助</p>
+<p>type _type struct {<br>    size       uintptr  //类型大小<br>    ptrdata    uintptr  //前缀持有所有指针的内存大小<br>    hash       uint32   //数据hash值<br>    tflag      tflag<br>    align      uint8    //对齐<br>    fieldalign uint8    //嵌入结构体时的对齐<br>    kind       uint8    //kind 有些枚举值kind等于0是无效的<br>    alg        <em>typeAlg //函数指针数组，类型实现的所有方法<br>    gcdata    </em>byte<br>    str       nameOff<br>    ptrToThis typeOff<br>}<br>iface比eface 中间多了一层itab结构</p>
+<p>type itab struct {<br>    inter  <em>interfacetype  //接口类型<br>    _type  </em>_type          //结构类型<br>    link   *itab<br>    bad    int32<br>    inhash int32<br>    fun    [1]uintptr      //可变大小 方法集合<br>}<br>itab 存储_type信息和[]fun方法集，从上面的结构我们就可得出，因为data指向了nil 并不代表interface 是nil，所以返回值并不为空，这里的fun(方法集)定义了接口的接收规则，在编译的过程中需要验证是否实现接口，接口的具体细节你可以阅读Go Data Structures: Interfaces </p>
+<p>接下来是第二个例子：</p>
+<p>package main</p>
+<p>import (<br>    “fmt”<br>)</p>
+<p>type People interface {<br>    Speak(string) string<br>}</p>
+<p>type Stduent struct{}</p>
+<p>func (stu *Stduent) Speak(think string) (talk string) {<br>    if think == “bitch” {<br>        talk = “You are a good boy”<br>    } else {<br>        talk = “hi”<br>    }<br>    return<br>}</p>
+<p>func main() {<br>    var peo People = Stduent{}<br>    think := “bitch”<br>    fmt.Println(peo.Speak(think))<br>}<br>上面的代码是不能编译过去的，会提示没有实现该接口，只要我们把var peo People = Stduent{}修改为var peo People = &amp;Stduent{}就可以了，为什么会有这种限制，</p>
+<p>这是因为接口定义不规定实现者是否应该使用指针接收还是值接收实现接口。当使用接口时，不能保证底层类型是值还是指针。我们上面的例子中，我们定义了指针接受方法，修改为值接受方法:</p>
+<p>func (stu Stduent) Speak(think string) (talk string) {<br>    if think == “bitch” {<br>        talk = “You are a good boy”<br>    } else {<br>        talk = “hi”<br>    }<br>    return<br>}<br>我们再次运行打印:</p>
+<p>You are a good boy<br>通过上面测试我们得出一个结论使用值传递方法，接口赋值使用var peo People = Stduent{}或者var peo People = &amp;Stduent{}，如果使用指针作为参数传递,则只能使用var peo People = &amp;Stduent{}，正是由于interface的灵活性，可以使用golang实现多态的特性，所以我们更要对interface多做深入了解。(本文未来可能会做一些细微的调整)</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Go 语言 </tag>
+            
+            <tag> golang 最佳实践 </tag>
+            
+            <tag> 编程 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[golang实现epoll代码解析]]></title>
       <url>/2017/10/25/golang%E5%AE%9E%E7%8E%B0epoll%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/</url>
       <content type="html"><![CDATA[<p>在文章之前，我先讲个故事，我有个朋友以前是java程序员，后来转过来做go，当我问他为什么选择go的时候，他跟我说，因为写go就没人说他写的代码low了 😄😄😄 这只是个段子不要当真。。。<br>好回归正题 golang 的网络轮循器是如何实现的那，先说明一下 golang 的网络轮循器是做什么的，你的go程序启动的时候会创建一个M去跑我们的系统监测任务代码如下(专栏下面的所有文章都是以go 1.8版本为准):</p>
