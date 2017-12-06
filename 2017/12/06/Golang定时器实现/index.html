@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title> Golang定时器实现 · 诺唯 </title>
+    <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="browsermode" content="application">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="诺唯">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="msapplication-navbutton-color" content="#666666">
+<meta name= "format-detection" content="telephone=no" />
+<meta name="keywords" content="nlvi, Nlvi" />
+
+
+    <meta name="subtitle" content="Noaway">
+
+
+    <meta name="description" content="诺唯,noaway">
+
+
+
+    <meta name="keywords" content="定时器, Go语言, Nlvi" />
+
+<link rel="stylesheet" href="/style/style.css">
+<script src="/script/jquery.min.js"></script>
+<script>
+    var CONFIG = {
+        title: "诺唯",
+        author: "王阳",
+        lightbox: true,
+        animate: true
+    }
+</script>
+
+
+
+    <link rel="stylesheet" href="/lightbox/css/lightbox.min.css">
+
+
+
+
+    <link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-inner"></div>
+</div>
+    <div class="body">
+    <div class="tagcloud-mask"></div>  
+<div class="tagcloud" id="tagcloud">
+    <div class="tagcloud-inner">
+        <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+    </div>
+</div>
+    <header class="header" id="header">
+    <div class="title syuanpi tvIn">
+    <div class="table">
+        <div class="connect">
+            <div class="connect-inner">
+                <span><a href="/">诺唯</a></span>
+                
+                    <span id="subtitle">Noaway</span>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <nav class="main-nav syuanpi tvIn">
+<div class="table">
+
+    <ul class="menu">
+        
+        <li class="menu-item">
+            <a href="javascript:;" id="search">
+                <span>搜索</span>
+                
+                    <span class="menu-item-label">search</span>
+                
+            </a>
+        </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="/">
+                    <span>文章</span>
+                    
+                        <span class="menu-item-label">article</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="/archives">
+                    <span>归档</span>
+                    
+                        <span class="menu-item-label">archives</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="javascript:;" id="tags">
+                    <span>标签</span>
+                    
+                        <span class="menu-item-label">tags</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="/about">
+                    <span>关于</span>
+                    
+                        <span class="menu-item-label">about</span>
+                    
+                </a>
+            </li>
+        
+        
+    </ul>
+
+</div>
+</nav>
+</header>
+<div class="mobile-header">
+    <div class="mobile-header-body">
+        <div class="mobile-header-list">
+            
+            
+                <div class="mobile-nav-item">
+                    <a href="/">
+                        <span>文章</span>
+                        
+                            <span class="menu-item-label">article</span>
+                        
+                    </a>
+                </div>
+            
+            
+            
+                <div class="mobile-nav-item">
+                    <a href="/archives">
+                        <span>归档</span>
+                        
+                            <span class="menu-item-label">archives</span>
+                        
+                    </a>
+                </div>
+            
+            
+            
+                <div class="mobile-nav-item inner-cloud">
+                    <div class="mobile-nav-tag">
+                        <a href="javascript:;" id="mobile-tags">
+                            <span>标签</span>
+                            
+                                <span class="menu-item-label">tags</span>
+                            
+                        </a>
+                    </div>
+                    <div class="mobile-nav-tagcloud">
+                        <div class="mobile-tagcloud-inner">
+                            <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            
+                <div class="mobile-nav-item">
+                    <a href="/about">
+                        <span>关于</span>
+                        
+                            <span class="menu-item-label">about</span>
+                        
+                    </a>
+                </div>
+            
+            
+        </div>
+    </div>
+    <div class="mobile-header-nav">
+        <div class="mobile-header-item" id="mobile-left">
+            <div class="header-menu-item">
+                <span class="header-menu-line"></span>
+            </div>
+        </div>
+        <h1 class="mobile-header-title">
+            <a href="/">诺唯</a>
+        </h1>
+        <div class="mobile-header-item"></div>
+    </div>
+</div>
+
+    <div class="container">
+        <main class="main" id="main">
+            
+    
+    <article class="post">
+        <header class="post-header">
+            <div class="post-time syuanpi riseIn-light back-1">
+                <span>2017年12月6日</span>
+                
+            </div>
+            <h1 class="post-title syuanpi riseIn-light back-2">
+            
+                Golang定时器实现
+            
+            </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/定时器/">定时器</a>
+                    
+                        <a href="/tags/Go语言/">Go语言</a>
+                    
+                    </div>
+                
+            
+        </header>
+        <div class="post-content syuanpi riseIn-light back-3">
+            
+                <p><img src="http://oyft9mgwt.bkt.clouddn.com/Golang%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AE%9E%E7%8E%B0title.png" alt=""></p>
+<p>这篇文章简单的介绍下golang time 包下定时器的实现，说道定时器，在我们开发过程中很常用，由于使用的场景不同，所以对定时器实际的实现也就不同，go的定时器并没有使用SIGALARM信号实现，而是采取最小堆的方式实现(源码包中使用数组实现的四叉树)，使用这种方式定时精度很高，但是有的时候可能我们不需要这么高精度的实现，为了更高效的利用资源，有的时候也会实现一个精度比较低的算法。<br><a id="more"></a><br>跟golang定时器相关的入口主要有以下几种方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;-time.Tick(time.Second)</div><div class="line">&lt;-time.After(time.Second)</div><div class="line">&lt;-time.NewTicker(time.Second).C</div><div class="line">&lt;-time.NewTimer(time.Second).C</div><div class="line">time.AfterFunc(time.Second, func() &#123; /*do*/ &#125;)</div><div class="line">time.Sleep(time.Second)</div></pre></td></tr></table></figure>
+<p>这里我们以其中NewTicker为入口，NewTicker的源码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">func NewTicker(d Duration) *Ticker &#123;</div><div class="line">    if d &lt;= 0 &#123;</div><div class="line">        panic(errors.New(&quot;non-positive interval for NewTicker&quot;))</div><div class="line">    &#125;</div><div class="line">    c := make(chan Time, 1)</div><div class="line">    t := &amp;Ticker&#123;</div><div class="line">        C: c,</div><div class="line">        r: runtimeTimer&#123;</div><div class="line">            // when(d)返回一个runtimeNano() + int64(d)的未来时(到期时间)</div><div class="line">            //runtimeNano运行时当前纳秒时间</div><div class="line">            when:   when(d),</div><div class="line">            period: int64(d), // 被唤醒的时间</div><div class="line">            f:      sendTime, // 时间到期后的回调函数</div><div class="line">            arg:    c,        // 时间到期后的断言参数</div><div class="line">        &#125;,</div><div class="line">    &#125;</div><div class="line">    // 将新的定时任务添加到时间堆中</div><div class="line">    // 编译器会将这个函数翻译为runtime.startTimer(t *runtime.timer)</div><div class="line">    // time.runtimeTimer翻译为runtime.timer</div><div class="line">    startTimer(&amp;t.r)</div><div class="line">    return t</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里有个比较重要的是startTimer(&amp;t.r)它的实现被翻译在runtime包内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func startTimer(t *timer) &#123;</div><div class="line">    if raceenabled &#123;</div><div class="line">        racerelease(unsafe.Pointer(t))</div><div class="line">    &#125;</div><div class="line">    addtimer(t)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func addtimer(t *timer) &#123;</div><div class="line">    lock(&amp;timers.lock)</div><div class="line">    addtimerLocked(t)</div><div class="line">    unlock(&amp;timers.lock)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码为了看着方便，我将他们都放在一起<br>下面代码都写出部分注释</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div></pre></td><td class="code"><pre><div class="line">// 使用锁将计时器添加到堆中</div><div class="line">// 如果是第一次运行此方法则启动timerproc</div><div class="line">    func addtimerLocked(t *timer) &#123;</div><div class="line">        if t.when &lt; 0 &#123;</div><div class="line">            t.when = 1&lt;&lt;63 - 1</div><div class="line">        &#125;</div><div class="line">        // t.i i是定时任务数组中的索引</div><div class="line">        // 将新的定时任务追加到定时任务数组队尾</div><div class="line">        t.i = len(timers.t)</div><div class="line">        timers.t = append(timers.t, t)</div><div class="line">        // 使用数组实现的四叉树最小堆根据when(到期时间)进行排序</div><div class="line">        siftupTimer(t.i)</div><div class="line">        // 如果t.i 索引为0</div><div class="line">        if t.i == 0 &#123;</div><div class="line">            if timers.sleeping &#123;</div><div class="line">                // 如果还在sleep就唤醒</div><div class="line">                timers.sleeping = false</div><div class="line">                // 这里基于OS的同步，并进行OS系统调用</div><div class="line">                // 在timerproc()使goroutine从睡眠状态恢复</div><div class="line">                notewakeup(&amp;timers.waitnote)</div><div class="line">            &#125;</div><div class="line">            if timers.rescheduling &#123;</div><div class="line">                timers.rescheduling = false</div><div class="line">                // 如果没有定时器，timerproc()与goparkunlock共同sleep</div><div class="line">                // goready这里特殊说明下，在线程创建的堆栈，它比goroutine堆栈大。</div><div class="line">                // 函数不能增长堆栈，同时不能被调度器抢占</div><div class="line">                goready(timers.gp, 0)</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if !timers.created &#123;</div><div class="line">            timers.created = true</div><div class="line">            go timerproc() //这里只有初始化一次</div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line">// Timerproc运行时间驱动的事件。</div><div class="line">// 它sleep到计时器堆中的下一个。</div><div class="line">// 如果addtimer插入一个新的事件，它会提前唤醒timerproc。</div><div class="line">    func timerproc() &#123;</div><div class="line">        timers.gp = getg()</div><div class="line">        for &#123;</div><div class="line">            lock(&amp;timers.lock)</div><div class="line">            timers.sleeping = false</div><div class="line">            now := nanotime()</div><div class="line">            delta := int64(-1)</div><div class="line">            for &#123;</div><div class="line">                if len(timers.t) == 0 &#123;</div><div class="line">                    delta = -1</div><div class="line">                    break</div><div class="line">                &#125;</div><div class="line">                t := timers.t[0]</div><div class="line">                delta = t.when - now</div><div class="line">                if delta &gt; 0 &#123;</div><div class="line">                    break // 时间未到</div><div class="line">                &#125;</div><div class="line">                if t.period &gt; 0 &#123;</div><div class="line">                    // 计算下一次时间</div><div class="line">                                    // period被唤醒的间隔</div><div class="line">                    t.when += t.period * (1 + -delta/t.period)</div><div class="line">                    siftdownTimer(0)</div><div class="line">                &#125; else &#123;</div><div class="line">                    // remove from heap</div><div class="line">                    last := len(timers.t) - 1</div><div class="line">                    if last &gt; 0 &#123;</div><div class="line">                        timers.t[0] = timers.t[last]</div><div class="line">                        timers.t[0].i = 0</div><div class="line">                    &#125;</div><div class="line">                    timers.t[last] = nil</div><div class="line">                    timers.t = timers.t[:last]</div><div class="line">                    if last &gt; 0 &#123;</div><div class="line">                        siftdownTimer(0)</div><div class="line">                    &#125;</div><div class="line">                    t.i = -1 // 标记移除</div><div class="line">                &#125;</div><div class="line">                f := t.f</div><div class="line">                arg := t.arg</div><div class="line">                seq := t.seq</div><div class="line">                unlock(&amp;timers.lock)</div><div class="line">                if raceenabled &#123;</div><div class="line">                    raceacquire(unsafe.Pointer(t))</div><div class="line">                &#125;</div><div class="line">                f(arg, seq)</div><div class="line">                lock(&amp;timers.lock)</div><div class="line">            &#125;</div><div class="line">            if delta &lt; 0 || faketime &gt; 0 &#123;</div><div class="line">                // 没有定时器，把goroutine sleep。</div><div class="line">                timers.rescheduling = true</div><div class="line">                // 将当前的goroutine放入等待状态并解锁锁。</div><div class="line">                // goroutine也可以通过呼叫goready(gp)来重新运行。</div><div class="line">                goparkunlock(&amp;timers.lock, &quot;timer goroutine (idle)&quot;, traceEvGoBlock, 1)</div><div class="line">                continue</div><div class="line">            &#125;</div><div class="line">            // At least one timer pending. Sleep until then.</div><div class="line">            timers.sleeping = true</div><div class="line">            timers.sleepUntil = now + delta</div><div class="line">            // 重置</div><div class="line">            noteclear(&amp;timers.waitnote)</div><div class="line">            unlock(&amp;timers.lock)</div><div class="line">            // 使goroutine进入睡眠状态，直到notewakeup被调用，</div><div class="line">            // 通过notewakeup 唤醒</div><div class="line">            notetsleepg(&amp;timers.waitnote, delta)</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>golang使用最小堆(最小堆是满足除了根节点以外的每个节点都不小于其父节点的堆)实现的定时器。golang []*timer结构如下:</p>
+<p><img src="http://oyft9mgwt.bkt.clouddn.com/Golang%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AE%9E%E7%8E%B0content.jpg" alt=""></p>
+<p>golang存储定时任务结构<br>addtimer在堆中插入一个值，然后保持最小堆的特性，其实这个结构本质就是最小优先队列的一个应用，然后将时间转换一个绝对时间处理，通过睡眠和唤醒找出定时任务，这里阅读起来源码很容易，所以只将代码和部分注释写出。</p>
+
+            
+        
+        </div>
+        
+            
+            
+        
+    </article>
+    
+        
+    <nav class="article-page">
+        
+        
+            <a href="/2017/11/09/GMT，UTC，DST，CST时间表示的区别/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>GMT，UTC，DST，CST时间表示的区别
+                </span>
+            </a>
+        
+    </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more jumping-in long infinite" style="font-size:24px;display:block;text-align:center;transform:rotate(180deg);"></i>
+    <div class="post-comments" id="post-comments" style="display: block;margin: auto 16px;">
+        
+        
+        
+        
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://blog-noaway-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
+
+
+    </div>
+
+
+
+    
+
+
+        </main>
+        <footer class="footer syuanpi fadeIn" id="footer">
+    <hr>
+    <div class="footer-wrapper">
+        <div class="left">
+            <div class="contact-icon">
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+        
+        
+            <a href="https://www.zhihu.com/people/noaway" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+        
+        
+        
+    
+        
+            <a href="https://github.com/noaway" class="iconfont icon-github" title="github"></a>
+        
+        
+        
+        
+        
+        
+        
+    
+</div>
+        </div>
+        <div class="right">
+            <div class="copyright">
+    <div class="info">
+        <span>&copy;</span>
+        <span>2016 ~ 2017</span>
+        <span>❤</span>
+        <span>王阳</span>
+    </div>
+    
+    
+</div>
+        </div>
+    </div>
+</footer>
+    </div>
+    <script src="/script/nlvi.js"></script>
+<script src="/script/search.js"></script>
+
+    <script src="/lightbox/js/lightbox.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    document.body.addEventListener('touchstart', function () {});
+    $('.progress').hide();
+    $('.body').show();
+    Nlvi.tagcloud();
+    Nlvi.mobileHeader();
+    Nlvi.back2top();
+    Nlvi.smoothScroll();
+    Nlvi.onView();
+    Nlvi.showToc();
+    Nlvi.showComments();
+    Nlvi.showReward();
+    Nlvi.picPos();
+
+    !CONFIG.animate && Nlvi.offAnimate();
+    CONFIG.lightbox && Nlvi.onPicBox();
+})
+</script>
+    </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">Golang定时器实现</a></li>
+            
+        </div>
+    </div>
+
+    
+    <div class="backtop syuanpi dead toTop" id="backtop">
+    <i class="iconfont icon-up"></i>
+    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
+</div>
+    
+    <div class="search" id="search">
+        <div class="mask" id="mask"></div>
+        <div class="search-wrapper syuanpi">
+            <h1 id="search-header" class="syuanpi">搜索一下？</h1>
+            <div class="input">
+                <input type="text" id="local-search-input" results="0" name="">
+            </div>
+            <div id="local-search-result"></div>
+        </div>
+    </div>
+    <script>
+    var GREETING = {
+        morning: "当我们探索时，就要发现到真理",
+        noon: "人的天职在于勇于探索真理。",
+        after: "一件事实是一条没有性别的真理",
+        night: "真理有时可能变得黯淡，但它永远不会熄灭",
+        midnight: "真理在人那里获得生命力，并且展现出来"
+    }
+    $(document).ready(function(){
+        Nlvi.search();
+    });
+    </script>
+
+</body>
+</html>

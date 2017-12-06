@@ -51,8 +51,6 @@
 
 
 
-    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
 
 </head>
 <body>
@@ -63,7 +61,7 @@
     <div class="tagcloud-mask"></div>  
 <div class="tagcloud" id="tagcloud">
     <div class="tagcloud-inner">
-        <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+        <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
     </div>
 </div>
     <header class="header" id="header">
@@ -181,7 +179,7 @@
                     </div>
                     <div class="mobile-nav-tagcloud">
                         <div class="mobile-tagcloud-inner">
-                            <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+                            <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
                         </div>
                     </div>
                 </div>
@@ -246,27 +244,17 @@
             
                 <p><img src="http://oyft9mgwt.bkt.clouddn.com/interface%E5%BC%95%E5%8F%91%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%9C%9F%E7%9B%B8.jpg" alt=""><br>(PS:专栏所有的代码都是基于go version go1.8 darwin/amd64)</p>
 <p>流动的水没有形状，漂流的风找不到踪迹，一切代码都了然于心，我们在写代码的时候，总是有一种思维定式陪伴左右，在对事物做判断的时候，往往这种思维定式会往正向或反向做推动作用，在开发的过程中如果不小心忽略，往往就是埋下了陷阱，以下代码是大多数新手会遇到的坑，<br><a id="more"></a></p>
-<p>package main</p>
-<p>import (<br>    “fmt”<br>)</p>
-<p>type People interface {<br>    Name() string<br>}<br>type Student struct{ name string }</p>
-<p>func (stu *Student) Name() string {<br>    return stu.name<br>}</p>
-<p>func getPeople() People {<br>    var stu *Student<br>    return stu<br>}</p>
-<p>func main() {<br>    if getPeople() == nil {<br>        fmt.Println(“AAAAA”)<br>    } else {<br>        fmt.Println(“BBBBB”)<br>    }<br>}<br>上面的代码输出什么那？有些人会认为打印AAAAA，因为他们会认为getPeople方法里面stu是nil 所以返回的就是nil，这样想就大错特错，因为虽然返回的stu是nil 但是函数返回时People接口的结构的本身并不是nil，在我们不了解interface内部结构之前请往下看。</p>
-<p>为什么我会选择去写一个关于interface的文章那，我认为他在go语言里面有这非常重要的地位，仅次于goroutine和channel的地位，我在未接触go之前一直从事于c#的开发，接口对我来说就是不同组件之间的契约，对这个契约强制你必须去继承接口，而go语言的设计就非常轻巧，只要实现了接口所要求的所有函数即可，go中的接口分为两种一种是空的接口类似这样：</p>
-<p>var in interface{}<br>例外一种是非空的接口即在接口内部声明了一些方法：</p>
-<p>type People interface {<br>    Name() string<br>}<br>接下来我就根据上面的例子来对比一下空接口和非空接口内部结构</p>
-<p>type eface struct {          //空接口<br>    _type <em>_type         //类型信息<br>    data  unsafe.Pointer //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void</em>)<br>}<br>type iface struct {          //带有方法的接口<br>    tab  <em>itab           //存储type信息还有结构实现方法的集合<br>    data unsafe.Pointer  //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void</em>)<br>}<br>eface包含一个类型信息，可以为reflect提供帮助</p>
-<p>type _type struct {<br>    size       uintptr  //类型大小<br>    ptrdata    uintptr  //前缀持有所有指针的内存大小<br>    hash       uint32   //数据hash值<br>    tflag      tflag<br>    align      uint8    //对齐<br>    fieldalign uint8    //嵌入结构体时的对齐<br>    kind       uint8    //kind 有些枚举值kind等于0是无效的<br>    alg        <em>typeAlg //函数指针数组，类型实现的所有方法<br>    gcdata    </em>byte<br>    str       nameOff<br>    ptrToThis typeOff<br>}<br>iface比eface 中间多了一层itab结构</p>
-<p>type itab struct {<br>    inter  <em>interfacetype  //接口类型<br>    _type  </em>_type          //结构类型<br>    link   *itab<br>    bad    int32<br>    inhash int32<br>    fun    [1]uintptr      //可变大小 方法集合<br>}<br>itab 存储_type信息和[]fun方法集，从上面的结构我们就可得出，因为data指向了nil 并不代表interface 是nil，所以返回值并不为空，这里的fun(方法集)定义了接口的接收规则，在编译的过程中需要验证是否实现接口，接口的具体细节你可以阅读Go Data Structures: Interfaces </p>
-<p>接下来是第二个例子：</p>
-<p>package main</p>
-<p>import (<br>    “fmt”<br>)</p>
-<p>type People interface {<br>    Speak(string) string<br>}</p>
-<p>type Stduent struct{}</p>
-<p>func (stu *Stduent) Speak(think string) (talk string) {<br>    if think == “bitch” {<br>        talk = “You are a good boy”<br>    } else {<br>        talk = “hi”<br>    }<br>    return<br>}</p>
-<p>func main() {<br>    var peo People = Stduent{}<br>    think := “bitch”<br>    fmt.Println(peo.Speak(think))<br>}<br>上面的代码是不能编译过去的，会提示没有实现该接口，只要我们把var peo People = Stduent{}修改为var peo People = &amp;Stduent{}就可以了，为什么会有这种限制，</p>
-<p>这是因为接口定义不规定实现者是否应该使用指针接收还是值接收实现接口。当使用接口时，不能保证底层类型是值还是指针。我们上面的例子中，我们定义了指针接受方法，修改为值接受方法:</p>
-<p>func (stu Stduent) Speak(think string) (talk string) {<br>    if think == “bitch” {<br>        talk = “You are a good boy”<br>    } else {<br>        talk = “hi”<br>    }<br>    return<br>}<br>我们再次运行打印:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">package main</div><div class="line"></div><div class="line">import (</div><div class="line">	&quot;fmt&quot;</div><div class="line">)</div><div class="line"></div><div class="line">type People interface &#123;</div><div class="line">	Name() string</div><div class="line">&#125;</div><div class="line">type Student struct&#123; name string &#125;</div><div class="line"></div><div class="line">func (stu *Student) Name() string &#123;</div><div class="line">	return stu.name</div><div class="line">&#125;</div><div class="line"></div><div class="line">func getPeople() People &#123;</div><div class="line">	var stu *Student</div><div class="line">	return stu</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">	if getPeople() == nil &#123;</div><div class="line">		fmt.Println(&quot;AAAAA&quot;)</div><div class="line">	&#125; else &#123;</div><div class="line">		fmt.Println(&quot;BBBBB&quot;)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码输出什么那？有些人会认为打印AAAAA，因为他们会认为getPeople方法里面stu是nil 所以返回的就是nil，这样想就大错特错，因为虽然返回的stu是nil 但是函数返回时People接口的结构的本身并不是nil，在我们不了解interface内部结构之前请往下看。</p>
+<p>为什么我会选择去写一个关于interface的文章那，我认为他在go语言里面有这非常重要的地位，仅次于goroutine和channel的地位，我在未接触go之前一直从事于c#的开发，接口对我来说就是不同组件之间的契约，对这个契约强制你必须去继承接口，而go语言的设计就非常轻巧，只要实现了接口所要求的所有函数即可，go中的接口分为两种一种是空的接口类似这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var in interface&#123;&#125;</div></pre></td></tr></table></figure></p>
+<p>例外一种是非空的接口即在接口内部声明了一些方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">type People interface &#123;</div><div class="line">	Name() string</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接下来我就根据上面的例子来对比一下空接口和非空接口内部结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">type eface struct &#123;          //空接口</div><div class="line">	_type *_type         //类型信息</div><div class="line">	data  unsafe.Pointer //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void*)</div><div class="line">&#125;</div><div class="line">type iface struct &#123;          //带有方法的接口</div><div class="line">	tab  *itab           //存储type信息还有结构实现方法的集合</div><div class="line">	data unsafe.Pointer  //指向数据的指针(go语言中特殊的指针类型unsafe.Pointer类似于c语言中的void*)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>eface包含一个类型信息，可以为reflect提供帮助<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">type _type struct &#123;</div><div class="line">	size       uintptr  //类型大小</div><div class="line">	ptrdata    uintptr  //前缀持有所有指针的内存大小</div><div class="line">	hash       uint32   //数据hash值</div><div class="line">	tflag      tflag    </div><div class="line">	align      uint8    //对齐</div><div class="line">	fieldalign uint8    //嵌入结构体时的对齐</div><div class="line">	kind       uint8    //kind 有些枚举值kind等于0是无效的</div><div class="line">	alg        *typeAlg //函数指针数组，类型实现的所有方法</div><div class="line">	gcdata    *byte</div><div class="line">	str       nameOff</div><div class="line">	ptrToThis typeOff</div><div class="line">&#125;</div><div class="line">iface比eface 中间多了一层itab结构</div><div class="line"></div><div class="line">type itab struct &#123;</div><div class="line">	inter  *interfacetype  //接口类型</div><div class="line">	_type  *_type          //结构类型</div><div class="line">	link   *itab           </div><div class="line">	bad    int32</div><div class="line">	inhash int32      </div><div class="line">	fun    [1]uintptr      //可变大小 方法集合</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>itab 存储_type信息和[]fun方法集，从上面的结构我们就可得出，因为data指向了nil 并不代表interface 是nil，所以返回值并不为空，这里的fun(方法集)定义了接口的接收规则，在编译的过程中需要验证是否实现接口，接口的具体细节你可以阅读Go Data Structures: Interfaces </p>
+<p>接下来是第二个例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">package main</div><div class="line"></div><div class="line">import (</div><div class="line">	&quot;fmt&quot;</div><div class="line">)</div><div class="line"></div><div class="line">type People interface &#123;</div><div class="line">	Speak(string) string</div><div class="line">&#125;</div><div class="line"></div><div class="line">type Stduent struct&#123;&#125;</div><div class="line"></div><div class="line">func (stu *Stduent) Speak(think string) (talk string) &#123;</div><div class="line">	if think == &quot;bitch&quot; &#123;</div><div class="line">		talk = &quot;You are a good boy&quot;</div><div class="line">	&#125; else &#123;</div><div class="line">		talk = &quot;hi&quot;</div><div class="line">	&#125;</div><div class="line">	return</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">	var peo People = Stduent&#123;&#125;</div><div class="line">	think := &quot;bitch&quot;</div><div class="line">	fmt.Println(peo.Speak(think))</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面的代码是不能编译过去的，会提示没有实现该接口，只要我们把var peo People = Stduent{}修改为var peo People = &amp;Stduent{}就可以了，为什么会有这种限制，</p>
+<p>这是因为接口定义不规定实现者是否应该使用指针接收还是值接收实现接口。当使用接口时，不能保证底层类型是值还是指针。我们上面的例子中，我们定义了指针接受方法，修改为值接受方法:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func (stu Stduent) Speak(think string) (talk string) &#123;</div><div class="line">	if think == &quot;bitch&quot; &#123;</div><div class="line">		talk = &quot;You are a good boy&quot;</div><div class="line">	&#125; else &#123;</div><div class="line">		talk = &quot;hi&quot;</div><div class="line">	&#125;</div><div class="line">	return</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们再次运行打印:</p>
 <p>You are a good boy<br>通过上面测试我们得出一个结论使用值传递方法，接口赋值使用var peo People = Stduent{}或者var peo People = &amp;Stduent{}，如果使用指针作为参数传递,则只能使用var peo People = &amp;Stduent{}，正是由于interface的灵活性，可以使用golang实现多态的特性，所以我们更要对interface多做深入了解。(本文未来可能会做一些细微的调整)</p>
 
             
@@ -378,13 +366,6 @@ s.setAttribute('data-timestamp', +new Date());
         <span>王阳</span>
     </div>
     
-    
-    <div class="visit_count">
-        <i class="iconfont icon-visit"></i>
-        <span id="busuanzi_value_site_uv"></span>
-        <i class="iconfont icon-people"></i>
-        <span id="busuanzi_value_site_pv"></span>
-    </div>
     
 </div>
         </div>

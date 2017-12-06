@@ -54,8 +54,6 @@
 
 
 
-    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
 
 </head>
 <body>
@@ -66,7 +64,7 @@
     <div class="tagcloud-mask"></div>  
 <div class="tagcloud" id="tagcloud">
     <div class="tagcloud-inner">
-        <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+        <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
     </div>
 </div>
     <header class="header" id="header">
@@ -184,7 +182,7 @@
                     </div>
                     <div class="mobile-nav-tagcloud">
                         <div class="mobile-tagcloud-inner">
-                            <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
+                            <a href="/tags/Go-语言/" style="font-size: 14px;">Go 语言</a> <a href="/tags/Go语言/" style="font-size: 14px;">Go语言</a> <a href="/tags/IO多路复用/" style="font-size: 14px;">IO多路复用</a> <a href="/tags/epoll/" style="font-size: 14px;">epoll</a> <a href="/tags/golang-最佳实践/" style="font-size: 14px;">golang 最佳实践</a> <a href="/tags/定时器/" style="font-size: 14px;">定时器</a> <a href="/tags/技术原理/" style="font-size: 14px;">技术原理</a> <a href="/tags/编程/" style="font-size: 14px;">编程</a>
                         </div>
                     </div>
                 </div>
@@ -222,6 +220,40 @@
     
 
 <section class="posts">
+    
+        
+    <article class="post">
+        <header class="post-header">
+            <div class="post-time syuanpi riseIn-light back-1">
+                <span>2017年12月6日</span>
+                
+            </div>
+            <h1 class="post-title syuanpi riseIn-light back-2">
+            
+                <a href="/2017/12/06/Golang定时器实现/">Golang定时器实现</a>
+            
+            </h1>
+            
+        </header>
+        <div class="post-content syuanpi riseIn-light back-3">
+            
+                
+                    <p><img src="http://oyft9mgwt.bkt.clouddn.com/Golang%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AE%9E%E7%8E%B0title.png" alt=""></p>
+<p>这篇文章简单的介绍下golang time 包下定时器的实现，说道定时器，在我们开发过程中很常用，由于使用的场景不同，所以对定时器实际的实现也就不同，go的定时器并没有使用SIGALARM信号实现，而是采取最小堆的方式实现(源码包中使用数组实现的四叉树)，使用这种方式定时精度很高，但是有的时候可能我们不需要这么高精度的实现，为了更高效的利用资源，有的时候也会实现一个精度比较低的算法。<br>
+                    
+            
+        
+            <p class="content-link">
+                <a href="/2017/12/06/Golang定时器实现/#more">
+                    <span class="iconfont icon-right">继续阅读</span>
+                </a>
+            </p>
+        
+        </div>
+        
+    </article>
+    
+
     
         
     <article class="post">
@@ -472,13 +504,6 @@
         <span>王阳</span>
     </div>
     
-    
-    <div class="visit_count">
-        <i class="iconfont icon-visit"></i>
-        <span id="busuanzi_value_site_uv"></span>
-        <i class="iconfont icon-people"></i>
-        <span id="busuanzi_value_site_pv"></span>
-    </div>
     
 </div>
         </div>
